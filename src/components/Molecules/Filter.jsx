@@ -5,10 +5,10 @@ import { setFilter } from '../Atoms/Store';
 import './filter.css';
 
 const Filter = () => {
-  const filter = useSelector(state => state.filter);
+  const filter = useSelector((state) => state.filter);
   const dispatch = useDispatch();
 
-  const onFilterChange = event => {
+  const onFilterChange = (event) => {
     event.preventDefault();
     dispatch(setFilter(event.target.value.toLowerCase()));
   };

@@ -11,7 +11,7 @@ const Form = () => {
   const numberId = nanoid();
   const dispatch = useDispatch();
 
-  const handleSubmit = evt => {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
     const { name, number } = formData;
 
@@ -28,12 +28,9 @@ const Form = () => {
     setFormData({ name: '', number: '' });
   };
 
-  const handleChange = event => {
+  const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData(prevData => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
   const { name, number } = formData;

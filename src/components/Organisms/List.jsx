@@ -8,13 +8,13 @@ import './list.css';
 const List = ({ contacts }) => {
   const dispatch = useDispatch();
 
-  const deleteContactHandler = contactId => {
+  const deleteContactHandler = (contactId) => {
     dispatch(deleteContact(contactId));
   };
 
   return (
     <ul>
-      {contacts.map(contact => (
+      {contacts.map((contact) => (
         <li className="contact" key={contact.id}>
           {contact.name}: {contact.number}
           <button className="delButton" onClick={() => deleteContactHandler(contact.id)}>

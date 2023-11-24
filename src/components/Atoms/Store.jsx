@@ -1,26 +1,63 @@
-import { configureStore, createAction, createReducer } from '@reduxjs/toolkit';
+import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Actions
-export const addContact = createAction('contacts/addContact');
-export const deleteContact = createAction('contacts/deleteContact');
-export const setFilter = createAction('filter/setFilter');
-
-// Reducers
-const contactsReducer = createReducer([], {
-  [addContact]: (state, action) => [...state, action.payload],
-  [deleteContact]: (state, action) => state.filter(contact => contact.id !== action.payload),
+export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async () => {
+  const response = await fetch('https://655bc2e8ab37729791a98fce.mockapi.io/contacts');
+  return response.json();
 });
 
-const filterReducer = createReducer('', {
-  [setFilter]: (_, action) => action.payload,
+export const addContact = createAsyncThunk('contacts/addContact', async (contactData) => {
+  const response = await fetch('https://655bc2e8ab37729791a98fce.mockapi.io/contacts', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(contactData),
+  });
+  return response.json();
 });
+
+export const deleteContact = createAsyncThunk('contacts/deleteContact', async (contactId) => {
+  await fetch(`https://655bc2e8ab37729791a98fce.mockapi.io/contacts/${contactId}`, {
+    method: 'DELETE',
+  });
+  return contactId;
+});
+
+const contactsSlice = createSlice({
+  name: 'contacts',
+  initialState: { data: [], status: 'idle', error: null },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchContacts.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchContacts.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.data = action.payload;
+      })
+      .addCase(fetchContacts.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+  },
+});
+
+const filterSlice = createSlice({
+  name: 'filter',
+  initialState: '',
+  reducers: {
+    setFilter: (state, action) => action.payload,
+  },
+});
+
+export const { setFilter } = filterSlice.actions;
 
 const rootReducer = {
-  contacts: contactsReducer,
-  filter: filterReducer,
+  contacts: contactsSlice.reducer,
+  filter: filterSlice.reducer,
 };
 
-// Store
 const store = configureStore({
   reducer: rootReducer,
 });
