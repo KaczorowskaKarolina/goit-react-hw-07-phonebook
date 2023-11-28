@@ -1,12 +1,12 @@
 import { configureStore, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchContacts = createAsyncThunk('contacts/fetchContacts', async () => {
-  const response = await fetch('https://655bc2e8ab37729791a98fce.mockapi.io');
+  const response = await fetch('https://655bc2e8ab37729791a98fce.mockapi.io/contacts');
   return response.json();
 });
 
 export const addContact = createAsyncThunk('contacts/addContact', async (contactData) => {
-  const response = await fetch('https://655bc2e8ab37729791a98fce.mockapi.io', {
+  const response = await fetch('https://655bc2e8ab37729791a98fce.mockapi.io/contacts', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -17,11 +17,17 @@ export const addContact = createAsyncThunk('contacts/addContact', async (contact
 });
 
 export const deleteContact = createAsyncThunk('contacts/deleteContact', async (contactId) => {
-  await fetch(`https://655bc2e8ab37729791a98fce.mockapi.io/${contactId}`, {
+  const response = await fetch(`https://655bc2e8ab37729791a98fce.mockapi.io/contacts/${contactId}`, {
     method: 'DELETE',
   });
+
+  if (!response.ok) {
+    throw new Error('Failed to delete contact');
+  }
+
   return contactId;
 });
+
 
 const contactsSlice = createSlice({
   name: 'contacts',
